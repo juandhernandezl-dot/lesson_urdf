@@ -26,6 +26,7 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
+                'joint_gui = lesson_urdf.joint_gui:main',
         ],
     },
 )
