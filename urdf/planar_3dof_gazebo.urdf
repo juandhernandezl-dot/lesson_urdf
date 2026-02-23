@@ -1,0 +1,173 @@
+<?xml version="1.0"?>
+<robot name="planar_3dof_leglike">
+
+  <material name="red">
+    <color rgba="0.8 0.0 0.0 1.0"/>
+  </material>
+
+  <link name="world" />
+
+  <!-- BASE -->
+  <link name="base_link">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://lesson_urdf/meshes/visual/arm_link.stl" scale="1 1 1"/>
+      </geometry>
+      <material name="red"/>
+    </visual>
+
+    <!-- Collision SIMPLE (no visible a menos que actives View->Collisions) -->
+    <collision>
+      <origin xyz="0.25 0 0" rpy="0 1.5708 0"/>
+      <geometry>
+        <cylinder length="0.5" radius="0.05"/>
+      </geometry>
+    </collision>
+
+    <inertial>
+      <origin xyz="0.25 0 0" rpy="0 0 0"/>
+      <mass value="1.0"/>
+      <inertia ixx="0.02" ixy="0" ixz="0" iyy="0.02" iyz="0" izz="0.02"/>
+    </inertial>
+  </link>
+
+  <!-- Base fija al mundo -->
+  <joint name="fixed" type="fixed">
+    <parent link="world"/>
+    <child link="base_link"/>
+  </joint>
+
+  <!-- Dummy con inercia mínima -->
+  <link name="link_twist_mount">
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="0.001"/>
+      <inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6"/>
+    </inertial>
+  </link>
+
+  <!-- JOINT 1 (Y) -->
+  <joint name="joint_1" type="revolute">
+    <parent link="base_link"/>
+    <child link="link_twist_mount"/>
+    <origin xyz="0.0 0.0 0.12" rpy="0 0 0"/>
+    <axis xyz="0 1 0"/>
+    <limit lower="-1.57" upper="1.57" effort="5.0" velocity="0.5"/>
+    <dynamics damping="0.2" friction="0.0"/>
+  </joint>
+
+  <!-- LINK 1 -->
+  <link name="link_1">
+    <visual>
+      <geometry>
+        <mesh filename="package://lesson_urdf/meshes/visual/arm_link.stl" scale="1 1 1"/>
+      </geometry>
+      <material name="red"/>
+    </visual>
+
+    <collision>
+      <origin xyz="0.25 0 0" rpy="0 1.5708 0"/>
+      <geometry>
+        <cylinder length="0.5" radius="0.05"/>
+      </geometry>
+    </collision>
+
+    <inertial>
+      <origin xyz="0.25 0 0" rpy="0 0 0"/>
+      <mass value="0.8"/>
+      <inertia ixx="0.015" ixy="0" ixz="0" iyy="0.015" iyz="0" izz="0.015"/>
+    </inertial>
+  </link>
+
+  <!-- JOINT 2 (Z) -->
+  <joint name="joint_2" type="revolute">
+    <parent link="link_twist_mount"/>
+    <child link="link_1"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <axis xyz="0 0 1"/>
+    <limit lower="-1.57" upper="1.57" effort="5.0" velocity="0.5"/>
+    <dynamics damping="0.2" friction="0.0"/>
+  </joint>
+
+  <!-- LINK 2 -->
+  <link name="link_2">
+    <visual>
+      <geometry>
+        <mesh filename="package://lesson_urdf/meshes/visual/arm_link.stl" scale="1 1 1"/>
+      </geometry>
+      <material name="red"/>
+    </visual>
+
+    <collision>
+      <origin xyz="0.25 0 0" rpy="0 1.5708 0"/>
+      <geometry>
+        <cylinder length="0.5" radius="0.05"/>
+      </geometry>
+    </collision>
+
+    <inertial>
+      <origin xyz="0.25 0 0" rpy="0 0 0"/>
+      <mass value="0.6"/>
+      <inertia ixx="0.01" ixy="0" ixz="0" iyy="0.01" iyz="0" izz="0.01"/>
+    </inertial>
+  </link>
+
+  <!-- JOINT 3 (Z) -->
+  <joint name="joint_3" type="revolute">
+    <parent link="link_1"/>
+    <child link="link_2"/>
+    <origin xyz="0.5 0.0 0.0" rpy="0 0 0"/>
+    <axis xyz="0 0 1"/>
+    <limit lower="-1.57" upper="1.57" effort="5.0" velocity="0.5"/>
+    <dynamics damping="0.2" friction="0.0"/>
+  </joint>
+
+  <!-- GRIPPER (frame final) -->
+  <link name="gripper">
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="0.001"/>
+      <inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6"/>
+    </inertial>
+  </link>
+
+  <joint name="joint_gripper_fixed" type="fixed">
+    <parent link="link_2"/>
+    <child link="gripper"/>
+    <origin xyz="0.5 0 0" rpy="0 0 0"/>
+  </joint>
+
+  <!-- ros2_control -->
+  <ros2_control name="GazeboSystem" type="system">
+    <hardware>
+      <plugin>gazebo_ros2_control/GazeboSystem</plugin>
+    </hardware>
+
+    <joint name="joint_1">
+      <command_interface name="position"/>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+    </joint>
+
+    <joint name="joint_2">
+      <command_interface name="position"/>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+    </joint>
+
+    <joint name="joint_3">
+      <command_interface name="position"/>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+    </joint>
+  </ros2_control>
+
+  <!-- Gazebo plugin -->
+  <gazebo>
+    <plugin name="gazebo_ros2_control" filename="libgazebo_ros2_control.so">
+      <parameters>__CONTROLLERS_YAML__</parameters>
+    </plugin>
+  </gazebo>
+
+</robot>
