@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
-
 import math
+import numpy as np
+
 import rclpy
 from rclpy.node import Node
 from sensor_msgs.msg import JointState
@@ -8,49 +9,81 @@ from geometry_msgs.msg import Vector3
 from PyQt5 import QtWidgets, QtCore
 
 # =========================
-# CONFIG (EDITA AQUÍ)
+# CONFIG
 # =========================
 JOINTS = ["joint_p", "joint_c", "joint_r"]
 
-# límites en grados (puedes cambiarlos según tu URDF / límites físicos)
 LIMITS_DEG = {
     "joint_p": (-90.0, 90.0),
     "joint_c": (-90.0, 90.0),
     "joint_r": (-90.0, 90.0),
 }
 
-# Pose HOME (en grados)
 HOME_DEG = {
     "joint_p": 15.0,
     "joint_c": -25.0,
     "joint_r": 40.0,
 }
 
-PUBLISH_HZ = 20.0  # frecuencia publicación /joint_states (RViz)
+PUBLISH_HZ = 20.0
 
-# Tópico para robot real (micro-ROS)
-HW_CMD_TOPIC = "leg_joints_cmd"  # coincide con tu firmware
-# Mapeo del GUI -> Vector3: x=hip_yaw, y=hip_pitch, z=knee_pitch
-# Ajusta si tu orden real es distinto
-HW_MAP = {
-    "x": "joint_p",
-    "y": "joint_c",
-    "z": "joint_r",
-}
+HW_CMD_TOPIC = "leg_joints_cmd"
+HW_MAP = {"x": "joint_p", "y": "joint_c", "z": "joint_r"}
+
+# =========================
+# DH PARAMETERS (tu tabla)
+# =========================
+d1 = 44e-3
+L1 = 23e-3
+L2 = 470e-3
+d2 = -73e-3
+L3 = 440e-3
+
+TH2_CONST = math.radians(-90.0)
+ALPHA2_CONST = math.radians(-90.0)
 
 
 def clamp(v: float, lo: float, hi: float) -> float:
     return max(lo, min(hi, v))
 
 
+def dh_T(theta: float, d: float, a: float, alpha: float) -> np.ndarray:
+    ct, st = math.cos(theta), math.sin(theta)
+    ca, sa = math.cos(alpha), math.sin(alpha)
+    return np.array(
+        [
+            [ct, -st * ca, st * sa, a * ct],
+            [st, ct * ca, -ct * sa, a * st],
+            [0.0, sa, ca, d],
+            [0.0, 0.0, 0.0, 1.0],
+        ],
+        dtype=float,
+    )
+
+
+def rot_to_rpy_zyx(R: np.ndarray):
+    r11, r21, r31 = R[0, 0], R[1, 0], R[2, 0]
+    r32, r33 = R[2, 1], R[2, 2]
+    pitch = math.atan2(-r31, math.sqrt(r11 * r11 + r21 * r21))
+
+    if abs(math.cos(pitch)) < 1e-9:
+        yaw = math.atan2(-R[1, 2], R[1, 1])
+        roll = 0.0
+    else:
+        yaw = math.atan2(r21, r11)
+        roll = math.atan2(r32, r33)
+
+    return yaw, pitch, roll
+
+
+def fmt_mat4(T: np.ndarray) -> str:
+    return "\n".join(" ".join(f"{v: .4f}" for v in row) for row in T)
+
+
 class JointGuiNode(Node):
     def __init__(self):
         super().__init__("lesson_urdf_joint_gui")
-
-        # RViz preview
         self.pub = self.create_publisher(JointState, "/joint_states", 10)
-
-        # Robot real (on-demand)
         self.hw_pub = self.create_publisher(Vector3, HW_CMD_TOPIC, 10)
 
         self.positions_rad = {j: 0.0 for j in JOINTS}
@@ -67,15 +100,11 @@ class JointGuiNode(Node):
     def publish_joint_states(self):
         msg = JointState()
         msg.header.stamp = self.get_clock().now().to_msg()
-        msg.name = JOINTS[:]  # orden fijo
+        msg.name = JOINTS[:]
         msg.position = [self.positions_rad[j] for j in msg.name]
         self.pub.publish(msg)
 
     def publish_hw_command_deg(self):
-        """
-        Publica un comando a hardware en grados.
-        Vector3(x,y,z) según HW_MAP.
-        """
         x_joint = HW_MAP["x"]
         y_joint = HW_MAP["y"]
         z_joint = HW_MAP["z"]
@@ -90,16 +119,56 @@ class JointGuiNode(Node):
             f"[ENVIADO HW] {HW_CMD_TOPIC}: x={cmd.x:.2f}°, y={cmd.y:.2f}°, z={cmd.z:.2f}°"
         )
 
+    def compute_fk_details(self):
+        """
+        DH: 4 filas (incluye fila 2 fija).
+        Retorna:
+          T0_1, T0_2, T0_3, T0_4
+        """
+        th1 = self.positions_rad["joint_p"]
+        th3 = self.positions_rad["joint_c"]
+        th4 = self.positions_rad["joint_r"]
+
+        A1 = dh_T(theta=th1, d=d1, a=L1, alpha=0.0)
+        A2 = dh_T(theta=TH2_CONST, d=0.0, a=0.0, alpha=ALPHA2_CONST)
+        A3 = dh_T(theta=th3, d=0.0, a=L2, alpha=0.0)
+        A4 = dh_T(theta=th4, d=d2, a=L3, alpha=0.0)
+
+        T01 = A1
+        T02 = T01 @ A2
+        T03 = T02 @ A3
+        T04 = T03 @ A4
+
+        Ts = [T01, T02, T03, T04]
+
+        details = []
+        for i, T in enumerate(Ts, start=1):
+            p = T[:3, 3]
+            R = T[:3, :3]
+            yaw, pitch, roll = rot_to_rpy_zyx(R)
+            details.append(
+                {
+                    "frame": f"T0_{i}",
+                    "xyz": (float(p[0]), float(p[1]), float(p[2])),
+                    "rpy": (float(roll), float(pitch), float(yaw)),
+                    "T": T,
+                }
+            )
+        return details
+
 
 class Window(QtWidgets.QWidget):
     def __init__(self, node: JointGuiNode):
         super().__init__()
         self.node = node
+        self.setWindowTitle("Lesson URDF - Joint Preview + FK")
 
-        self.setWindowTitle("Lesson URDF - Joint Preview")
         layout = QtWidgets.QVBoxLayout()
-
         self.rows = {}
+
+        # =========================
+        # Sliders
+        # =========================
         for j in JOINTS:
             row = QtWidgets.QHBoxLayout()
 
@@ -124,6 +193,7 @@ class Window(QtWidgets.QWidget):
             def on_slider(val, joint=j, line=edit):
                 line.setText(str(val))
                 apply_value_deg(float(val), joint)
+                refresh_state_details()
 
             def on_edit(joint=j, s=slider, line=edit):
                 try:
@@ -136,6 +206,7 @@ class Window(QtWidgets.QWidget):
                 s.setValue(int(round(val)))
                 line.setText(f"{val:.1f}")
                 apply_value_deg(val, joint)
+                refresh_state_details()
 
             slider.valueChanged.connect(on_slider)
             edit.returnPressed.connect(on_edit)
@@ -145,10 +216,70 @@ class Window(QtWidgets.QWidget):
             row.addWidget(slider)
             row.addWidget(edit)
             layout.addLayout(row)
-
             self.rows[j] = (slider, edit)
 
+        # =========================
+        # State details estilo MRPT (lista clickeable)
+        # =========================
+        self.state_box = QtWidgets.QGroupBox("State details (FK / Transform matrices)")
+        h = QtWidgets.QHBoxLayout()
+
+        self.lst_mats = QtWidgets.QListWidget()
+        self.lst_mats.setMaximumWidth(110)
+
+        self.txt_mat = QtWidgets.QPlainTextEdit()
+        self.txt_mat.setReadOnly(True)
+        self.txt_mat.setMinimumHeight(260)
+
+        h.addWidget(self.lst_mats)
+        h.addWidget(self.txt_mat, 1)
+        self.state_box.setLayout(h)
+        layout.addWidget(self.state_box)
+
+        self._fk_cache = []
+
+        def show_selected_matrix():
+            idx = self.lst_mats.currentRow()
+            if idx < 0 or idx >= len(self._fk_cache):
+                return
+            d = self._fk_cache[idx]
+            x, y, z = d["xyz"]
+            roll, pitch, yaw = d["rpy"]
+            T = d["T"]
+
+            self.txt_mat.setPlainText(
+                f"{d['frame']}:\n"
+                f"xyz [m]  = ({x:.4f}, {y:.4f}, {z:.4f})\n"
+                f"rpy [rad]= (roll={roll:.4f}, pitch={pitch:.4f}, yaw={yaw:.4f})\n\n"
+                f"T (4x4):\n{fmt_mat4(T)}"
+            )
+
+        self.lst_mats.currentRowChanged.connect(lambda _: show_selected_matrix())
+
+        def refresh_state_details():
+            try:
+                details = self.node.compute_fk_details()
+            except Exception as e:
+                self._fk_cache = []
+                self.lst_mats.clear()
+                self.txt_mat.setPlainText(f"[FK ERROR] {e}")
+                return
+
+            self._fk_cache = details
+
+            self.lst_mats.blockSignals(True)
+            self.lst_mats.clear()
+            for d in details:
+                self.lst_mats.addItem(d["frame"])
+            self.lst_mats.blockSignals(False)
+
+            if self.lst_mats.count() > 0:
+                self.lst_mats.setCurrentRow(0)
+                show_selected_matrix()
+
+        # =========================
         # Botones básicos
+        # =========================
         btns = QtWidgets.QHBoxLayout()
         btn_zero = QtWidgets.QPushButton("Zero")
         btn_home = QtWidgets.QPushButton("Home")
@@ -156,9 +287,10 @@ class Window(QtWidgets.QWidget):
         btns.addWidget(btn_home)
         layout.addLayout(btns)
 
-        # ---- NUEVO: sección hardware ----
+        # =========================
+        # Hardware
+        # =========================
         hw_row = QtWidgets.QHBoxLayout()
-
         self.chk_enable_hw = QtWidgets.QCheckBox("Habilitar motores")
         self.chk_enable_hw.setChecked(False)
 
@@ -183,6 +315,7 @@ class Window(QtWidgets.QWidget):
                 s.blockSignals(False)
                 e.setText(f"{val:.1f}")
                 self.node.set_joint_deg(joint, val)
+            refresh_state_details()
 
         def do_zero():
             set_pose_deg({j: 0.0 for j in JOINTS})
@@ -204,7 +337,6 @@ class Window(QtWidgets.QWidget):
                 )
                 return
 
-            # Confirmación rápida (evita envíos accidentales)
             xj, yj, zj = HW_MAP["x"], HW_MAP["y"], HW_MAP["z"]
             msg = (
                 "¿Enviar comando al robot real?\n\n"
@@ -213,9 +345,11 @@ class Window(QtWidgets.QWidget):
                 f"z ({zj}) = {self.node.get_joint_deg(zj):.2f}°"
             )
             ret = QtWidgets.QMessageBox.question(
-                self, "Confirmar envío", msg,
+                self,
+                "Confirmar envío",
+                msg,
                 QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No,
-                QtWidgets.QMessageBox.No
+                QtWidgets.QMessageBox.No,
             )
             if ret != QtWidgets.QMessageBox.Yes:
                 return
@@ -227,7 +361,7 @@ class Window(QtWidgets.QWidget):
         self.chk_enable_hw.stateChanged.connect(update_hw_label)
         btn_send.clicked.connect(do_send)
 
-        # aplica pose inicial
+        # init
         do_zero()
         update_hw_label()
 
@@ -242,7 +376,6 @@ def main():
     w = Window(node)
     w.show()
 
-    # Loop Qt + spin ROS
     spin_timer = QtCore.QTimer()
     spin_timer.timeout.connect(lambda: rclpy.spin_once(node, timeout_sec=0.0))
     spin_timer.start(10)

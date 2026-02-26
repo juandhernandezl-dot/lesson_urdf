@@ -3,22 +3,22 @@
      Commit Version: 1.6.0-4-g7f85cfe  Build Version: 1.6.7995.38578
      For more information, please see http://wiki.ros.org/sw_urdf_exporter -->
 <robot
-  name="Pierna_entera_2">
+  name="Pierna enteraaaaaaaaaaa.SLDASM">
   <link
     name="base_link">
     <inertial>
       <origin
-        xyz="-0.00250245032232071 0.251517073292659 0.175881539388643"
+        xyz="-0.0025025 -0.17588 0.25152"
         rpy="0 0 0" />
       <mass
-        value="0.313191197329196" />
+        value="0.31319" />
       <inertia
-        ixx="0.00113074597450617"
-        ixy="5.06648436970605E-05"
-        ixz="1.01441767230027E-05"
-        iyy="0.000112285853478866"
-        iyz="-6.28525512292321E-05"
-        izz="0.00113161900695232" />
+        ixx="0.0011307"
+        ixy="-1.0144E-05"
+        ixz="5.0665E-05"
+        iyy="0.0011316"
+        iyz="6.2853E-05"
+        izz="0.00011229" />
     </inertial>
     <visual>
       <origin
@@ -26,12 +26,12 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://lesson_urdf/meshes/base_link.STL"/>
+          filename="package://lesson_urdf/meshes/base_link.STL" />
       </geometry>
       <material
         name="">
         <color
-          rgba="0.898039215686275 0.92156862745098 0.929411764705882 1" />
+          rgba="0.89804 0.92157 0.92941 1" />
       </material>
     </visual>
     <collision>
@@ -48,17 +48,17 @@
     name="link_p">
     <inertial>
       <origin
-        xyz="0.00033555 -0.0029601 0.020892"
+        xyz="-0.000150427229849236 -0.00297528930070973 0.0208919297661822"
         rpy="0 0 0" />
       <mass
-        value="0.13838" />
+        value="0.138380104137137" />
       <inertia
-        ixx="5.0666E-05"
-        ixy="-1.549E-06"
-        ixz="1.1666E-07"
-        iyy="6.4116E-05"
-        iyz="-1.0334E-06"
-        izz="4.273E-05" />
+        ixx="5.05247266315499E-05"
+        ixy="6.91643752688145E-07"
+        ixz="-5.29990486490267E-08"
+        iyy="6.42572200451749E-05"
+        iyz="-1.03863238761051E-06"
+        izz="4.27301161244844E-05" />
     </inertial>
     <visual>
       <origin
@@ -101,17 +101,17 @@
     name="link_c">
     <inertial>
       <origin
-        xyz="0.29751 0.1045 -0.010047"
+        xyz="0.315330280840531 -2.34606143384025E-05 -0.010047091614373"
         rpy="0 0 0" />
       <mass
-        value="0.30893" />
+        value="0.3089298949799" />
       <inertia
-        ixx="0.00014292"
-        ixy="-0.00020178"
-        ixz="-4.7007E-06"
-        iyy="0.00064636"
-        iyz="-1.6663E-06"
-        izz="0.00073083" />
+        ixx="7.20297996548906E-05"
+        ixy="-1.74839874712284E-09"
+        ixz="-4.98731333977898E-06"
+        iyy="0.000717249875302029"
+        iyz="-1.3946552312525E-08"
+        izz="0.00073083436101478" />
     </inertial>
     <visual>
       <origin
@@ -141,8 +141,8 @@
     name="joint_c"
     type="continuous">
     <origin
-      xyz="-0.0047758 0.041904 0.02325"
-      rpy="1.5708 0 -3.0281" />
+      xyz="0.0021041 0.042122 0.02325"
+      rpy="1.5708 0 3.0917" />
     <parent
       link="link_p" />
     <child
@@ -154,17 +154,17 @@
     name="link_r">
     <inertial>
       <origin
-        xyz="0.20735 -0.045612 -0.011448"
+        xyz="0.212306297554012 1.94867171676716E-06 -0.011447592682255"
         rpy="0 0 0" />
       <mass
-        value="0.1843" />
+        value="0.184300341408798" />
       <inertia
-        ixx="6.2303E-05"
-        ixy="0.00013228"
-        ixz="-1.5195E-10"
-        iyy="0.00063454"
-        iyz="-2.117E-10"
-        izz="0.00066576" />
+        ixx="3.3203754311843E-05"
+        ixy="-2.50204353742291E-09"
+        ixz="-1.00150733282631E-10"
+        iyy="0.000663634897908807"
+        iyz="-2.39351302771645E-10"
+        izz="0.000665757228078733" />
     </inertial>
     <visual>
       <origin
@@ -194,7 +194,7 @@
     name="joint_r"
     type="continuous">
     <origin
-      xyz="0.44154 0.15513 0.037775"
+      xyz="0.468 0 0.037775"
       rpy="0 0 0" />
     <parent
       link="link_c" />
