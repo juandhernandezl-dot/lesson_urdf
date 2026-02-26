@@ -10,20 +10,20 @@ from PyQt5 import QtWidgets, QtCore
 # =========================
 # CONFIG (EDITA AQUÍ)
 # =========================
-JOINTS = ["joint_1", "joint_2", "joint_3"]
+JOINTS = ["joint_p", "joint_c", "joint_r"]
 
 # límites en grados (puedes cambiarlos según tu URDF / límites físicos)
 LIMITS_DEG = {
-    "joint_1": (-90.0, 90.0),
-    "joint_2": (-90.0, 90.0),
-    "joint_3": (-90.0, 90.0),
+    "joint_p": (-90.0, 90.0),
+    "joint_c": (-90.0, 90.0),
+    "joint_r": (-90.0, 90.0),
 }
 
 # Pose HOME (en grados)
 HOME_DEG = {
-    "joint_1": 15.0,
-    "joint_2": -25.0,
-    "joint_3": 40.0,
+    "joint_p": 15.0,
+    "joint_c": -25.0,
+    "joint_r": 40.0,
 }
 
 PUBLISH_HZ = 20.0  # frecuencia publicación /joint_states (RViz)
@@ -33,9 +33,9 @@ HW_CMD_TOPIC = "leg_joints_cmd"  # coincide con tu firmware
 # Mapeo del GUI -> Vector3: x=hip_yaw, y=hip_pitch, z=knee_pitch
 # Ajusta si tu orden real es distinto
 HW_MAP = {
-    "x": "joint_1",
-    "y": "joint_2",
-    "z": "joint_3",
+    "x": "joint_p",
+    "y": "joint_c",
+    "z": "joint_r",
 }
 
 

@@ -5,22 +5,22 @@ from launch_ros.actions import Node
 
 def generate_launch_description():
     pkg = get_package_share_directory("lesson_urdf")
-    urdf_path = os.path.join(pkg, "urdf", "planar_3dof.urdf")
+    urdf_path = os.path.join(pkg, "urdf", "Pierna_entera_2.urdf")
 
     with open(urdf_path, "r") as f:
         robot_description = f.read()
+
+    gui = Node(
+        package="lesson_urdf",
+        executable="joint_gui",
+        output="screen",
+    )
 
     rsp = Node(
         package="robot_state_publisher",
         executable="robot_state_publisher",
         output="screen",
         parameters=[{"robot_description": robot_description}],
-    )
-
-    gui = Node(
-        package="lesson_urdf",
-        executable="joint_gui",
-        output="screen",
     )
 
     rviz_config = os.path.join(pkg, "rviz", "view.rviz")
