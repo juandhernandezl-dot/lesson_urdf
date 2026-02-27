@@ -3,7 +3,7 @@
      Commit Version: 1.6.0-4-g7f85cfe  Build Version: 1.6.7995.38578
      For more information, please see http://wiki.ros.org/sw_urdf_exporter -->
 <robot
-  name="Pierna enteraaaaaaaaaaa.SLDASM">
+  name="legrobot">
   <link
     name="base_link">
     <inertial>
@@ -190,7 +190,7 @@
       </geometry>
     </collision>
   </link>
-  <joint
+   <joint
     name="joint_r"
     type="continuous">
     <origin
@@ -202,5 +202,24 @@
       link="link_r" />
     <axis
       xyz="0 0 -1" />
+  </joint>
+
+  <!-- ===== FOOT / TIP EXACTO EN PUNTA DEL STL ===== -->
+  <link name="foot_link">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <sphere radius="0.01"/>
+      </geometry>
+      <material name="red">
+        <color rgba="1 0 0 1"/>
+      </material>
+    </visual>
+  </link>
+
+  <joint name="joint_foot" type="fixed">
+    <origin xyz="0.441000 0.0 -0.0117" rpy="0 0 0"/>
+    <parent link="link_r"/>
+    <child link="foot_link"/>
   </joint>
 </robot>

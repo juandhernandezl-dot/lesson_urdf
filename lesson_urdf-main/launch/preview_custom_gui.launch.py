@@ -5,7 +5,7 @@ from launch_ros.actions import Node
 
 def generate_launch_description():
     pkg = get_package_share_directory("lesson_urdf")
-    urdf_path = os.path.join(pkg, "urdf", "Pierna enteraaaaaaaaaaa.SLDASM.urdf")
+    urdf_path = os.path.join(pkg, "urdf", "legrobot.urdf")
 
     with open(urdf_path, "r") as f:
         robot_description = f.read()
