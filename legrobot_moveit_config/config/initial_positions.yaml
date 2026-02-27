@@ -1,0 +1,6 @@
+# Default initial positions for legrobot's ros2_control fake system
+
+initial_positions:
+  joint_c: 0
+  joint_p: 0
+  joint_r: 0

@@ -1,0 +1,25 @@
+moveit_setup_assistant_config:
+  urdf:
+    package: lesson_urdf
+    relative_path: urdf/legrobot.urdf
+  srdf:
+    relative_path: config/legrobot.srdf
+  package_settings:
+    author_name: Juan Hernandez
+    author_email: juan_d.hernandez_l@uao.edu.co
+    generated_timestamp: 1772159815
+  control_xacro:
+    command:
+      - position
+    state:
+      - position
+      - velocity
+  modified_urdf:
+    xacros:
+      - control_xacro
+  control_xacro:
+    command:
+      - position
+    state:
+      - position
+      - velocity
