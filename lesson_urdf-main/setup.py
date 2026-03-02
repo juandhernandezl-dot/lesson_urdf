@@ -32,6 +32,7 @@ setup(
     entry_points={
         'console_scripts': [
             'joint_gui = lesson_urdf.joint_gui:main',
+            'moveit_monitor_gui = lesson_urdf.moveit_monitor_gui:main',
         ],
     },
 )

@@ -82,12 +82,6 @@ def generate_launch_description():
         ],
     )
 
-    joint_gui = Node(
-        package="lesson_urdf",
-        executable="joint_gui",
-        output="screen",
-        )
-
     delayed_spawners = TimerAction(period=8.0, actions=[spawner_jsb, spawner_pos])
 
     return LaunchDescription([
@@ -95,5 +89,4 @@ def generate_launch_description():
         robot_state_publisher,
         spawn_entity,
         delayed_spawners,
-        joint_gui,
     ])

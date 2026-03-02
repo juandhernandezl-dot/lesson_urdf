@@ -35,11 +35,11 @@ HW_MAP = {"x": "joint_p", "y": "joint_c", "z": "joint_r"}
 # =========================
 # DH PARAMETERS
 # =========================
-d1 = 20.61e-3
-L1 = 43.49e-3
-L2 = 465.53e-3
-d2 = -60.96e-3
-L3 = 437.06e-3
+d1 = 61.8e-3
+L1 = 72.47e-3
+L2 = 61.44e-3
+d2 = -272.93e-3
+L3 = 246e-3
 
 # fila 2 "fantasma": theta=-90°, d=0, a=0, alpha=-90°
 TH2_CONST = math.radians(-90.0)
@@ -48,7 +48,7 @@ ALPHA2_CONST = math.radians(-90.0)
 # =========================
 # FOOT LINK (del URDF joint_foot): link_r -> foot_link
 # =========================
-FOOT_XYZ = (0.441000, 0.0, -0.0117)  # [m]
+FOOT_XYZ = (0.2459344, 0.019235, -0.01007747)  # [m]
 FOOT_RPY = (0.0, 0.0, 0.0)           # [rad]
 
 
