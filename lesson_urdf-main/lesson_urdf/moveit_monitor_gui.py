@@ -17,66 +17,91 @@ JOINTS = ["joint_p", "joint_c", "joint_r"]
 HW_CMD_TOPIC = "leg_joints_cmd"
 HW_MAP = {"x": "joint_p", "y": "joint_c", "z": "joint_r"}
 
-PUBLISH_HZ = 30.0  # streaming rate
+PUBLISH_HZ = 30.0  # tasa refresco monitor
+
+PRINT_GEOM_TO_TERMINAL = False
 
 # =========================
-# DH PARAMETERS
+# PARÁMETROS GEOMÉTRICOS REALES
+# derivados del CAD / URDF
 # =========================
-d1 = 61.8e-3
-L1 = 72.47e-3
-L2 = 61.44e-3
-d2 = -272.93e-3
-L3 = 246e-3
 
-TH2_CONST = math.radians(-90.0)
-ALPHA2_CONST = math.radians(-90.0)
+# base(c) -> p  (en el frame de cadera)
+D_CP = (-0.018425, -7.5056e-05, 0.0728)
 
-FOOT_XYZ = (0.2459344, 0.019235, -0.01007747)
-FOOT_RPY = (0.0, 0.0, 0.0)
+# p -> r
+D_PR = (0.18787, 0.0, 0.064085)
+
+# r -> foot
+D_RF = (0.16093478, 0.00001944, 0.03845750)
+
+# Rotación fija entre frame c y frame p
+# viene de joint_p origin rpy="1.5708 0 -1.5708"
+RPY_CP = (1.5708, 0.0, -1.5708)
 
 
-def dh_T(theta: float, d: float, a: float, alpha: float) -> np.ndarray:
-    ct, st = math.cos(theta), math.sin(theta)
-    ca, sa = math.cos(alpha), math.sin(alpha)
+def rotx_T(theta: float) -> np.ndarray:
+    c = math.cos(theta)
+    s = math.sin(theta)
     return np.array(
         [
-            [ct, -st * ca, st * sa, a * ct],
-            [st, ct * ca, -ct * sa, a * st],
-            [0.0, sa, ca, d],
+            [1.0, 0.0, 0.0, 0.0],
+            [0.0, c, -s, 0.0],
+            [0.0, s,  c, 0.0],
             [0.0, 0.0, 0.0, 1.0],
         ],
         dtype=float,
     )
 
 
-def rpy_T(roll: float, pitch: float, yaw: float) -> np.ndarray:
-    cr, sr = math.cos(roll), math.sin(roll)
-    cp, sp = math.cos(pitch), math.sin(pitch)
-    cy, sy = math.cos(yaw), math.sin(yaw)
-
-    R = np.array(
+def roty_T(theta: float) -> np.ndarray:
+    c = math.cos(theta)
+    s = math.sin(theta)
+    return np.array(
         [
-            [cy * cp, cy * sp * sr - sy * cr, cy * sp * cr + sy * sr],
-            [sy * cp, sy * sp * sr + cy * cr, sy * sp * cr - cy * sr],
-            [-sp, cp * sr, cp * cr],
+            [c, 0.0, s, 0.0],
+            [0.0, 1.0, 0.0, 0.0],
+            [-s, 0.0, c, 0.0],
+            [0.0, 0.0, 0.0, 1.0],
         ],
         dtype=float,
     )
 
+
+def rotz_T(theta: float) -> np.ndarray:
+    c = math.cos(theta)
+    s = math.sin(theta)
+    return np.array(
+        [
+            [c, -s, 0.0, 0.0],
+            [s,  c, 0.0, 0.0],
+            [0.0, 0.0, 1.0, 0.0],
+            [0.0, 0.0, 0.0, 1.0],
+        ],
+        dtype=float,
+    )
+
+
+def trans_T(x: float, y: float, z: float) -> np.ndarray:
     T = np.eye(4, dtype=float)
-    T[:3, :3] = R
+    T[0, 3] = x
+    T[1, 3] = y
+    T[2, 3] = z
     return T
 
 
-def fixed_T(xyz, rpy) -> np.ndarray:
-    T = rpy_T(rpy[0], rpy[1], rpy[2])
-    T[0, 3] = float(xyz[0])
-    T[1, 3] = float(xyz[1])
-    T[2, 3] = float(xyz[2])
-    return T
+def rpy_T(roll: float, pitch: float, yaw: float) -> np.ndarray:
+    """
+    Convención ZYX:
+    R = Rz(yaw) * Ry(pitch) * Rx(roll)
+    """
+    return rotz_T(yaw) @ roty_T(pitch) @ rotx_T(roll)
 
 
 def rot_to_rpy_zyx(R: np.ndarray):
+    """
+    Devuelve (yaw, pitch, roll) en convención ZYX.
+    """
     r11, r21, r31 = R[0, 0], R[1, 0], R[2, 0]
     r32, r33 = R[2, 1], R[2, 2]
     pitch = math.atan2(-r31, math.sqrt(r11 * r11 + r21 * r21))
@@ -95,13 +120,25 @@ def fmt_mat4(T: np.ndarray) -> str:
     return "\n".join(" ".join(f"{v: .4f}" for v in row) for row in T)
 
 
+def fmt_vec3(v) -> str:
+    return f"({float(v[0]):.4f}, {float(v[1]):.4f}, {float(v[2]):.4f})"
+
+
 class MonitorNode(Node):
     def __init__(self):
         super().__init__("moveit_joint_monitor_gui")
+
         self.hw_pub = self.create_publisher(Vector3, HW_CMD_TOPIC, 10)
         self.sub = self.create_subscription(JointState, "/joint_states", self._on_js, 50)
 
         self.positions_rad = {j: 0.0 for j in JOINTS}
+
+        # MTH fija c -> p (offset + reorientación fija)
+        self.T_cp_fixed = trans_T(*D_CP) @ rpy_T(*RPY_CP)
+
+        # MTH fijas p -> r y r -> foot (solo traslación)
+        self.T_pr_fixed = trans_T(*D_PR)
+        self.T_rf_fixed = trans_T(*D_RF)
 
     def _on_js(self, msg: JointState):
         name_to_pos = {n: p for n, p in zip(msg.name, msg.position)}
@@ -120,27 +157,44 @@ class MonitorNode(Node):
         self.hw_pub.publish(cmd)
 
     def compute_fk_details(self):
-        th1 = self.positions_rad["joint_p"]
-        th3 = self.positions_rad["joint_c"]
-        th4 = self.positions_rad["joint_r"]
+        """
+        Método geométrico expresado con matrices homogéneas.
 
-        A1 = dh_T(theta=th1, d=d1, a=L1, alpha=0.0)
-        A2 = dh_T(theta=TH2_CONST, d=0.0, a=0.0, alpha=ALPHA2_CONST)
-        A3 = dh_T(theta=th3, d=0.0, a=L2, alpha=0.0)
-        A4 = dh_T(theta=th4, d=d2, a=L3, alpha=0.0)
+        Convención:
+        - joint_c: giro alrededor de Z de base
+        - joint_p: giro alrededor de Z local con signo negativo
+        - joint_r: giro alrededor de Z local con signo negativo
 
-        T01 = A1
-        T02 = T01 @ A2
-        T03 = T02 @ A3
-        T04 = T03 @ A4
-        T0foot = T04 @ fixed_T(FOOT_XYZ, FOOT_RPY)
+        La articulación fantasma queda absorbida en:
+            T_cp_fixed = Trans(D_CP) * RPY_CP
+        """
+        qc = self.positions_rad["joint_c"]
+        qp = self.positions_rad["joint_p"]
+        qr = self.positions_rad["joint_r"]
+
+        # 0 -> c
+        T01 = rotz_T(qc)
+
+        # c -> p
+        T12 = self.T_cp_fixed @ rotz_T(-qp)
+
+        # p -> r
+        T23 = self.T_pr_fixed @ rotz_T(-qr)
+
+        # r -> foot
+        T34 = self.T_rf_fixed
+
+        # acumuladas
+        T02 = T01 @ T12
+        T03 = T02 @ T23
+        T04 = T03 @ T34
 
         Ts = [
-            ("T0_1", T01),
-            ("T0_2 (phantom)", T02),
-            ("T0_3", T03),
-            ("T0_4", T04),
-            ("T0_foot", T0foot),
+            ("T0_1", T01),      # base -> c
+            ("T0_2", T02),      # base -> p
+            ("T0_3", T03),      # base -> r
+            ("T0_4", T04),      # base -> foot
+            ("T0_foot", T04),   # alias
         ]
 
         details = []
@@ -158,38 +212,63 @@ class MonitorNode(Node):
             )
         return details
 
+    def maybe_print_geom_terminal(self):
+        if not PRINT_GEOM_TO_TERMINAL:
+            return
+        details = self.compute_fk_details()
+        T = details[-1]["T"]
+        p = T[:3, 3]
+        self.get_logger().info(
+            f"[GEOM T0_foot] xyz={fmt_vec3(p)}\n{fmt_mat4(T)}"
+        )
+
 
 class Window(QtWidgets.QWidget):
     def __init__(self, node: MonitorNode):
         super().__init__()
         self.node = node
-        self.setWindowTitle("MoveIt Monitor - Angulos + FK (solo lectura)")
+        self.setWindowTitle("MoveIt Monitor - Ángulos + FK geométrica")
 
         layout = QtWidgets.QVBoxLayout()
 
+        # =========================
+        # Tabla de joints
+        # =========================
         self.tbl = QtWidgets.QTableWidget(len(JOINTS), 2)
-        self.tbl.setHorizontalHeaderLabels(["Joint", "Angulo (deg)"])
+        self.tbl.setHorizontalHeaderLabels(["Joint", "Ángulo (deg)"])
         self.tbl.verticalHeader().setVisible(False)
         self.tbl.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
+
         for i, j in enumerate(JOINTS):
             self.tbl.setItem(i, 0, QtWidgets.QTableWidgetItem(j))
             self.tbl.setItem(i, 1, QtWidgets.QTableWidgetItem("0.0"))
+
         self.tbl.resizeColumnsToContents()
         layout.addWidget(self.tbl)
 
-        self.state_box = QtWidgets.QGroupBox("FK / Transform matrices")
+        # =========================
+        # Panel de matrices
+        # =========================
+        self.state_box = QtWidgets.QGroupBox("FK geométrica / Transform matrices")
         h = QtWidgets.QHBoxLayout()
+
         self.lst_mats = QtWidgets.QListWidget()
         self.lst_mats.setMaximumWidth(160)
+
         self.txt_mat = QtWidgets.QPlainTextEdit()
         self.txt_mat.setReadOnly(True)
+
         h.addWidget(self.lst_mats)
         h.addWidget(self.txt_mat, 1)
         self.state_box.setLayout(h)
         layout.addWidget(self.state_box)
 
-        # Solo CHECK (sin botón)
-        self.chk_enable_hw = QtWidgets.QCheckBox("Habilitar motores (HW)  [streaming a /leg_joints_cmd]")
+        # =========================
+        # Streaming a HW
+        # =========================
+        self.chk_enable_hw = QtWidgets.QCheckBox(
+            "Habilitar motores (HW)  [streaming a /leg_joints_cmd]"
+        )
         self.chk_enable_hw.setChecked(False)
         layout.addWidget(self.chk_enable_hw)
 
@@ -197,7 +276,11 @@ class Window(QtWidgets.QWidget):
         layout.addWidget(self.lbl_hw)
 
         def update_hw_label():
-            self.lbl_hw.setText("HW: habilitado (streaming)" if self.chk_enable_hw.isChecked() else "HW: deshabilitado")
+            self.lbl_hw.setText(
+                "HW: habilitado (streaming)"
+                if self.chk_enable_hw.isChecked()
+                else "HW: deshabilitado"
+            )
 
         self.chk_enable_hw.stateChanged.connect(update_hw_label)
 
@@ -216,6 +299,7 @@ class Window(QtWidgets.QWidget):
             self.tbl.item(i, 1).setText(f"{self.node.get_joint_deg(j):.2f}")
 
         prev = self.lst_mats.currentItem().text() if self.lst_mats.currentItem() else None
+
         try:
             details = self.node.compute_fk_details()
         except Exception as e:
@@ -224,6 +308,7 @@ class Window(QtWidgets.QWidget):
             return
 
         self._fk_cache = details
+
         self.lst_mats.blockSignals(True)
         self.lst_mats.clear()
         for d in details:
@@ -235,21 +320,25 @@ class Window(QtWidgets.QWidget):
             matches = self.lst_mats.findItems(prev, QtCore.Qt.MatchExactly)
             if matches:
                 idx = self.lst_mats.row(matches[0])
+
         self.lst_mats.setCurrentRow(idx)
         self._show_selected()
 
-        # ✅ streaming
         if self.chk_enable_hw.isChecked():
             self.node.publish_hw_command_deg()
+
+        self.node.maybe_print_geom_terminal()
 
     def _show_selected(self):
         idx = self.lst_mats.currentRow()
         if idx < 0 or idx >= len(self._fk_cache):
             return
+
         d = self._fk_cache[idx]
         x, y, z = d["xyz"]
         roll, pitch, yaw = d["rpy"]
         T = d["T"]
+
         self.txt_mat.setPlainText(
             f"{d['frame']}:\n"
             f"xyz [m]  = ({x:.4f}, {y:.4f}, {z:.4f})\n"
@@ -274,8 +363,16 @@ def main():
     signal.signal(signal.SIGTERM, lambda *args: app.quit())
 
     app.exec_()
-    node.destroy_node()
-    rclpy.shutdown()
+
+    try:
+        node.destroy_node()
+    except Exception:
+        pass
+
+    try:
+        rclpy.shutdown()
+    except Exception:
+        pass
 
 
 if __name__ == "__main__":

@@ -1,225 +1,163 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- This URDF was automatically created by SolidWorks to URDF Exporter! Originally created by Stephen Brawner (brawner@gmail.com) 
-     Commit Version: 1.6.0-4-g7f85cfe  Build Version: 1.6.7995.38578
-     For more information, please see http://wiki.ros.org/sw_urdf_exporter -->
-<robot
-  name="legrobot">
-  <link
-    name="base_link">
+<!-- This URDF was automatically created by SolidWorks to URDF Exporter! -->
+<robot name="legrobot">
+
+  <link name="base_link">
     <inertial>
-      <origin
-        xyz="-0.0025025 -0.17588 0.25152"
-        rpy="0 0 0" />
-      <mass
-        value="0.31319" />
+      <origin xyz="-0.00031562 -0.38069 -0.19718" rpy="0 0 0" />
+      <mass value="27.938" />
       <inertia
-        ixx="0.0011307"
-        ixy="-1.0144E-05"
-        ixz="5.0665E-05"
-        iyy="0.0011316"
-        iyz="6.2853E-05"
-        izz="0.00011229" />
+        ixx="3.1922"
+        ixy="-2.0816E-07"
+        ixz="-4.6883E-06"
+        iyy="0.82292"
+        iyz="2.7341E-05"
+        izz="3.8518" />
     </inertial>
     <visual>
-      <origin
-        xyz="0 0 0"
-        rpy="0 0 0" />
+      <origin xyz="0 0 0" rpy="0 0 0" />
       <geometry>
-        <mesh
-          filename="package://lesson_urdf/meshes/base_link.STL" />
+        <mesh filename="package://lesson_urdf/meshes/base_link.STL" />
       </geometry>
-      <material
-        name="">
-        <color
-          rgba="0.89804 0.92157 0.92941 1" />
+      <material name="">
+        <color rgba="0.79216 0.81961 0.93333 1" />
       </material>
     </visual>
     <collision>
-      <origin
-        xyz="0 0 0"
-        rpy="0 0 0" />
+      <origin xyz="0 0 0" rpy="0 0 0" />
       <geometry>
-        <mesh
-          filename="package://lesson_urdf/meshes/base_link.STL" />
+        <mesh filename="package://lesson_urdf/meshes/base_link.STL" />
       </geometry>
     </collision>
   </link>
-  <link
-    name="link_p">
+
+  <link name="link_c">
     <inertial>
-      <origin
-        xyz="-0.000150427229849236 -0.00297528930070973 0.0208919297661822"
-        rpy="0 0 0" />
-      <mass
-        value="0.138380104137137" />
+      <origin xyz="-0.00607678063574883 -9.25432442502871E-05 0.0508740320776411" rpy="0 0 0" />
+      <mass value="0.395989033420963" />
       <inertia
-        ixx="5.05247266315499E-05"
-        ixy="6.91643752688145E-07"
-        ixz="-5.29990486490267E-08"
-        iyy="6.42572200451749E-05"
-        iyz="-1.03863238761051E-06"
-        izz="4.27301161244844E-05" />
+        ixx="0.000353651203153324"
+        ixy="-1.19220624574886E-07"
+        ixz="1.27125400434043E-05"
+        iyy="0.000269496865325384"
+        iyz="-2.4683623541523E-09"
+        izz="0.000321124799946867" />
     </inertial>
     <visual>
-      <origin
-        xyz="0 0 0"
-        rpy="0 0 0" />
+      <origin xyz="0 0 0" rpy="0 0 0" />
       <geometry>
-        <mesh
-          filename="package://lesson_urdf/meshes/link_p.STL" />
+        <mesh filename="package://lesson_urdf/meshes/link_c.STL" />
       </geometry>
-      <material
-        name="">
-        <color
-          rgba="1 1 0 1" />
+      <material name="">
+        <color rgba="0.250980392156863 0.250980392156863 0.250980392156863 1" />
       </material>
     </visual>
     <collision>
-      <origin
-        xyz="0 0 0"
-        rpy="0 0 0" />
+      <origin xyz="0 0 0" rpy="0 0 0" />
       <geometry>
-        <mesh
-          filename="package://lesson_urdf/meshes/link_p.STL" />
+        <mesh filename="package://lesson_urdf/meshes/link_c.STL" />
       </geometry>
     </collision>
   </link>
-  <joint
-    name="joint_p"
-    type="continuous">
-    <origin
-      xyz="-0.0024512 -0.097818 0.25643"
-      rpy="1.5091 0 -3.1416" />
-    <parent
-      link="base_link" />
-    <child
-      link="link_p" />
-    <axis
-      xyz="0 0 1" />
-  </joint>
-  <link
-    name="link_c">
-    <inertial>
-      <origin
-        xyz="0.315330280840531 -2.34606143384025E-05 -0.010047091614373"
-        rpy="0 0 0" />
-      <mass
-        value="0.3089298949799" />
-      <inertia
-        ixx="7.20297996548906E-05"
-        ixy="-1.74839874712284E-09"
-        ixz="-4.98731333977898E-06"
-        iyy="0.000717249875302029"
-        iyz="-1.3946552312525E-08"
-        izz="0.00073083436101478" />
-    </inertial>
-    <visual>
-      <origin
-        xyz="0 0 0"
-        rpy="0 0 0" />
-      <geometry>
-        <mesh
-          filename="package://lesson_urdf/meshes/link_c.STL" />
-      </geometry>
-      <material
-        name="">
-        <color
-          rgba="1 1 0 1" />
-      </material>
-    </visual>
-    <collision>
-      <origin
-        xyz="0 0 0"
-        rpy="0 0 0" />
-      <geometry>
-        <mesh
-          filename="package://lesson_urdf/meshes/link_c.STL" />
-      </geometry>
-    </collision>
-  </link>
-  <joint
-    name="joint_c"
-    type="continuous">
-    <origin
-      xyz="0.0021041 0.042122 0.02325"
-      rpy="1.5708 0 3.0917" />
-    <parent
-      link="link_p" />
-    <child
-      link="link_c" />
-    <axis
-      xyz="0 0 -1" />
-  </joint>
-  <link
-    name="link_r">
-    <inertial>
-      <origin
-        xyz="0.212306297554012 1.94867171676716E-06 -0.011447592682255"
-        rpy="0 0 0" />
-      <mass
-        value="0.184300341408798" />
-      <inertia
-        ixx="3.3203754311843E-05"
-        ixy="-2.50204353742291E-09"
-        ixz="-1.00150733282631E-10"
-        iyy="0.000663634897908807"
-        iyz="-2.39351302771645E-10"
-        izz="0.000665757228078733" />
-    </inertial>
-    <visual>
-      <origin
-        xyz="0 0 0"
-        rpy="0 0 0" />
-      <geometry>
-        <mesh
-          filename="package://lesson_urdf/meshes/link_r.STL" />
-      </geometry>
-      <material
-        name="">
-        <color
-          rgba="1 1 0 1" />
-      </material>
-    </visual>
-    <collision>
-      <origin
-        xyz="0 0 0"
-        rpy="0 0 0" />
-      <geometry>
-        <mesh
-          filename="package://lesson_urdf/meshes/link_r.STL" />
-      </geometry>
-    </collision>
-  </link>
-   <joint
-    name="joint_r"
-    type="continuous">
-    <origin
-      xyz="0.468 0 0.037775"
-      rpy="0 0 0" />
-    <parent
-      link="link_c" />
-    <child
-      link="link_r" />
-    <axis
-      xyz="0 0 -1" />
+
+  <joint name="joint_c" type="revolute">
+    <origin xyz="0 0 0" rpy="0 0 0" />
+    <parent link="base_link" />
+    <child link="link_c" />
+    <axis xyz="0 0 1" />
+    <limit lower="-1.571" upper="1.571" effort="0" velocity="0" />
   </joint>
 
-  <!-- ===== FOOT / TIP EXACTO EN PUNTA DEL STL ===== -->
+  <link name="link_p">
+    <inertial>
+      <origin xyz="0.141111414203552 3.42323288900354E-05 0.0483954496475126" rpy="0 0 0" />
+      <mass value="0.44537879484085" />
+      <inertia
+        ixx="0.000191983416808675"
+        ixy="-5.92878876361306E-09"
+        ixz="-1.11303408553969E-05"
+        iyy="0.000277215892032175"
+        iyz="-1.18153440735387E-07"
+        izz="0.000374091387166414" />
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://lesson_urdf/meshes/link_p.STL" />
+      </geometry>
+      <material name="">
+        <color rgba="1 1 1 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://lesson_urdf/meshes/link_p.STL" />
+      </geometry>
+    </collision>
+  </link>
+
+  <joint name="joint_p" type="revolute">
+    <origin xyz="-0.018425 -7.5056E-05 0.0728" rpy="1.5708 0 -1.5708" />
+    <parent link="link_c" />
+    <child link="link_p" />
+    <axis xyz="0 0 -1" />
+    <limit lower="-1.571" upper="1.571" effort="0" velocity="0" />
+  </joint>
+
+  <link name="link_r">
+    <inertial>
+      <origin xyz="0.0684896842906384 -3.10463087879742E-05 0.038007438491045" rpy="0 0 0" />
+      <mass value="0.154972710016794" />
+      <inertia
+        ixx="2.67294575789039E-05"
+        ixy="-4.30676265522342E-09"
+        ixz="-1.85000872473295E-09"
+        iyy="9.0496782883407E-05"
+        iyz="2.46392235148045E-12"
+        izz="9.54221270682617E-05" />
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://lesson_urdf/meshes/link_r.STL" />
+      </geometry>
+      <material name="">
+        <color rgba="1 1 1 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://lesson_urdf/meshes/link_r.STL" />
+      </geometry>
+    </collision>
+  </link>
+
+  <joint name="joint_r" type="revolute">
+    <origin xyz="0.18787 0 0.064085" rpy="0 0 0" />
+    <parent link="link_p" />
+    <child link="link_r" />
+    <axis xyz="0 0 -1" />
+    <limit lower="-1.571" upper="1.571" effort="0" velocity="0" />
+  </joint>
+
   <link name="foot_link">
     <visual>
-      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <origin xyz="0 0 0" rpy="0 0 0" />
       <geometry>
-        <sphere radius="0.01"/>
+        <sphere radius="0.01" />
       </geometry>
       <material name="red">
-        <color rgba="1 0 0 1"/>
+        <color rgba="1 0 0 1" />
       </material>
     </visual>
   </link>
 
   <joint name="joint_foot" type="fixed">
-    <origin xyz="0.441000 0.0 -0.0117" rpy="0 0 0"/>
-    <parent link="link_r"/>
-    <child link="foot_link"/>
+    <origin xyz="0.16093478 0.00001944 0.03845750" rpy="0 0 0" />
+    <parent link="link_r" />
+    <child link="foot_link" />
   </joint>
+
 </robot>
