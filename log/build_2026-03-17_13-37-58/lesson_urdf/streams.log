@@ -1,0 +1,52 @@
+[0.856s] Invoking command in '/home/pavel/ros2_ws/src/lesson_urdf': PYTHONPATH=/home/pavel/ros2_ws/build/lesson_urdf/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/pavel/ros2_ws/install/lesson_urdf/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/lesson_urdf build --build-base /home/pavel/ros2_ws/build/lesson_urdf/build install --record /home/pavel/ros2_ws/build/lesson_urdf/install.log --single-version-externally-managed install_data
+[1.087s] running egg_info
+[1.088s] creating ../../build/lesson_urdf/lesson_urdf.egg-info
+[1.088s] writing ../../build/lesson_urdf/lesson_urdf.egg-info/PKG-INFO
+[1.088s] writing dependency_links to ../../build/lesson_urdf/lesson_urdf.egg-info/dependency_links.txt
+[1.088s] writing entry points to ../../build/lesson_urdf/lesson_urdf.egg-info/entry_points.txt
+[1.088s] writing requirements to ../../build/lesson_urdf/lesson_urdf.egg-info/requires.txt
+[1.089s] writing top-level names to ../../build/lesson_urdf/lesson_urdf.egg-info/top_level.txt
+[1.089s] writing manifest file '../../build/lesson_urdf/lesson_urdf.egg-info/SOURCES.txt'
+[1.090s] reading manifest file '../../build/lesson_urdf/lesson_urdf.egg-info/SOURCES.txt'
+[1.090s] adding license file 'LICENSE'
+[1.091s] writing manifest file '../../build/lesson_urdf/lesson_urdf.egg-info/SOURCES.txt'
+[1.091s] running build
+[1.091s] running build_py
+[1.091s] creating /home/pavel/ros2_ws/build/lesson_urdf/build
+[1.091s] creating /home/pavel/ros2_ws/build/lesson_urdf/build/lib
+[1.092s] creating /home/pavel/ros2_ws/build/lesson_urdf/build/lib/lesson_urdf
+[1.092s] copying lesson_urdf/joint_gui.py -> /home/pavel/ros2_ws/build/lesson_urdf/build/lib/lesson_urdf
+[1.092s] copying lesson_urdf/__init__.py -> /home/pavel/ros2_ws/build/lesson_urdf/build/lib/lesson_urdf
+[1.092s] running install
+[1.092s] running install_lib
+[1.092s] creating /home/pavel/ros2_ws/install/lesson_urdf/lib/python3.10/site-packages/lesson_urdf
+[1.092s] copying /home/pavel/ros2_ws/build/lesson_urdf/build/lib/lesson_urdf/joint_gui.py -> /home/pavel/ros2_ws/install/lesson_urdf/lib/python3.10/site-packages/lesson_urdf
+[1.093s] copying /home/pavel/ros2_ws/build/lesson_urdf/build/lib/lesson_urdf/__init__.py -> /home/pavel/ros2_ws/install/lesson_urdf/lib/python3.10/site-packages/lesson_urdf
+[1.093s] byte-compiling /home/pavel/ros2_ws/install/lesson_urdf/lib/python3.10/site-packages/lesson_urdf/joint_gui.py to joint_gui.cpython-310.pyc
+[1.095s] byte-compiling /home/pavel/ros2_ws/install/lesson_urdf/lib/python3.10/site-packages/lesson_urdf/__init__.py to __init__.cpython-310.pyc
+[1.095s] running install_data
+[1.095s] creating /home/pavel/ros2_ws/install/lesson_urdf/share/ament_index
+[1.095s] creating /home/pavel/ros2_ws/install/lesson_urdf/share/ament_index/resource_index
+[1.095s] creating /home/pavel/ros2_ws/install/lesson_urdf/share/ament_index/resource_index/packages
+[1.095s] copying resource/lesson_urdf -> /home/pavel/ros2_ws/install/lesson_urdf/share/ament_index/resource_index/packages
+[1.095s] copying package.xml -> /home/pavel/ros2_ws/install/lesson_urdf/share/lesson_urdf
+[1.095s] copying launch/view_robot_launch.py -> /home/pavel/ros2_ws/install/lesson_urdf/share/lesson_urdf
+[1.096s] copying launch/gazebo_leg.launch.py -> /home/pavel/ros2_ws/install/lesson_urdf/share/lesson_urdf
+[1.096s] copying launch/preview_custom_gui.launch.py -> /home/pavel/ros2_ws/install/lesson_urdf/share/lesson_urdf
+[1.096s] creating /home/pavel/ros2_ws/install/lesson_urdf/share/lesson_urdf/urdf
+[1.096s] copying urdf/planar_3dof.urdf -> /home/pavel/ros2_ws/install/lesson_urdf/share/lesson_urdf/urdf
+[1.096s] copying urdf/planar_3dof_gazebo.urdf -> /home/pavel/ros2_ws/install/lesson_urdf/share/lesson_urdf/urdf
+[1.096s] copying urdf/planar_3dof.urdf.bak -> /home/pavel/ros2_ws/install/lesson_urdf/share/lesson_urdf/urdf
+[1.096s] creating /home/pavel/ros2_ws/install/lesson_urdf/share/lesson_urdf/rviz
+[1.096s] copying rviz/view.rviz -> /home/pavel/ros2_ws/install/lesson_urdf/share/lesson_urdf/rviz
+[1.097s] creating /home/pavel/ros2_ws/install/lesson_urdf/share/lesson_urdf/config
+[1.097s] copying config/ros2_controllers.yaml -> /home/pavel/ros2_ws/install/lesson_urdf/share/lesson_urdf/config
+[1.097s] creating /home/pavel/ros2_ws/install/lesson_urdf/share/lesson_urdf/meshes
+[1.097s] creating /home/pavel/ros2_ws/install/lesson_urdf/share/lesson_urdf/meshes/collision
+[1.097s] creating /home/pavel/ros2_ws/install/lesson_urdf/share/lesson_urdf/meshes/visual
+[1.097s] running install_egg_info
+[1.098s] Copying ../../build/lesson_urdf/lesson_urdf.egg-info to /home/pavel/ros2_ws/install/lesson_urdf/lib/python3.10/site-packages/lesson_urdf-0.0.0-py3.10.egg-info
+[1.099s] running install_scripts
+[1.118s] Installing joint_gui script to /home/pavel/ros2_ws/install/lesson_urdf/lib/lesson_urdf
+[1.118s] writing list of installed files to '/home/pavel/ros2_ws/build/lesson_urdf/install.log'
+[1.144s] Invoked command in '/home/pavel/ros2_ws/src/lesson_urdf' returned '0': PYTHONPATH=/home/pavel/ros2_ws/build/lesson_urdf/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/pavel/ros2_ws/install/lesson_urdf/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/lesson_urdf build --build-base /home/pavel/ros2_ws/build/lesson_urdf/build install --record /home/pavel/ros2_ws/build/lesson_urdf/install.log --single-version-externally-managed install_data
