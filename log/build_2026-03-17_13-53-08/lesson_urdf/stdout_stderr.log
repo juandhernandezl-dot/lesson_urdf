@@ -1,0 +1,56 @@
+running egg_info
+creating ../../../build/lesson_urdf/lesson_urdf.egg-info
+writing ../../../build/lesson_urdf/lesson_urdf.egg-info/PKG-INFO
+writing dependency_links to ../../../build/lesson_urdf/lesson_urdf.egg-info/dependency_links.txt
+writing entry points to ../../../build/lesson_urdf/lesson_urdf.egg-info/entry_points.txt
+writing requirements to ../../../build/lesson_urdf/lesson_urdf.egg-info/requires.txt
+writing top-level names to ../../../build/lesson_urdf/lesson_urdf.egg-info/top_level.txt
+writing manifest file '../../../build/lesson_urdf/lesson_urdf.egg-info/SOURCES.txt'
+reading manifest file '../../../build/lesson_urdf/lesson_urdf.egg-info/SOURCES.txt'
+adding license file 'LICENSE'
+writing manifest file '../../../build/lesson_urdf/lesson_urdf.egg-info/SOURCES.txt'
+running build
+running build_py
+creating /home/pavel/ros2_ws/build/lesson_urdf/build
+creating /home/pavel/ros2_ws/build/lesson_urdf/build/lib
+creating /home/pavel/ros2_ws/build/lesson_urdf/build/lib/lesson_urdf
+copying lesson_urdf/joint_gui.py -> /home/pavel/ros2_ws/build/lesson_urdf/build/lib/lesson_urdf
+copying lesson_urdf/__init__.py -> /home/pavel/ros2_ws/build/lesson_urdf/build/lib/lesson_urdf
+copying lesson_urdf/moveit_monitor_gui.py -> /home/pavel/ros2_ws/build/lesson_urdf/build/lib/lesson_urdf
+running install
+running install_lib
+creating /home/pavel/ros2_ws/install/lesson_urdf/lib/python3.10/site-packages/lesson_urdf
+copying /home/pavel/ros2_ws/build/lesson_urdf/build/lib/lesson_urdf/joint_gui.py -> /home/pavel/ros2_ws/install/lesson_urdf/lib/python3.10/site-packages/lesson_urdf
+copying /home/pavel/ros2_ws/build/lesson_urdf/build/lib/lesson_urdf/__init__.py -> /home/pavel/ros2_ws/install/lesson_urdf/lib/python3.10/site-packages/lesson_urdf
+copying /home/pavel/ros2_ws/build/lesson_urdf/build/lib/lesson_urdf/moveit_monitor_gui.py -> /home/pavel/ros2_ws/install/lesson_urdf/lib/python3.10/site-packages/lesson_urdf
+byte-compiling /home/pavel/ros2_ws/install/lesson_urdf/lib/python3.10/site-packages/lesson_urdf/joint_gui.py to joint_gui.cpython-310.pyc
+byte-compiling /home/pavel/ros2_ws/install/lesson_urdf/lib/python3.10/site-packages/lesson_urdf/__init__.py to __init__.cpython-310.pyc
+byte-compiling /home/pavel/ros2_ws/install/lesson_urdf/lib/python3.10/site-packages/lesson_urdf/moveit_monitor_gui.py to moveit_monitor_gui.cpython-310.pyc
+running install_data
+creating /home/pavel/ros2_ws/install/lesson_urdf/share/ament_index
+creating /home/pavel/ros2_ws/install/lesson_urdf/share/ament_index/resource_index
+creating /home/pavel/ros2_ws/install/lesson_urdf/share/ament_index/resource_index/packages
+copying resource/lesson_urdf -> /home/pavel/ros2_ws/install/lesson_urdf/share/ament_index/resource_index/packages
+copying package.xml -> /home/pavel/ros2_ws/install/lesson_urdf/share/lesson_urdf
+creating /home/pavel/ros2_ws/install/lesson_urdf/share/lesson_urdf/launch
+copying launch/moveit_with_monitor.launch.py -> /home/pavel/ros2_ws/install/lesson_urdf/share/lesson_urdf/launch
+copying launch/gazebo_leg.launch.py -> /home/pavel/ros2_ws/install/lesson_urdf/share/lesson_urdf/launch
+copying launch/preview_custom_gui.launch.py -> /home/pavel/ros2_ws/install/lesson_urdf/share/lesson_urdf/launch
+creating /home/pavel/ros2_ws/install/lesson_urdf/share/lesson_urdf/urdf
+copying urdf/legrobot.urdf -> /home/pavel/ros2_ws/install/lesson_urdf/share/lesson_urdf/urdf
+copying urdf/planar_3dof.urdf.xacro -> /home/pavel/ros2_ws/install/lesson_urdf/share/lesson_urdf/urdf
+creating /home/pavel/ros2_ws/install/lesson_urdf/share/lesson_urdf/rviz
+copying rviz/view.rviz -> /home/pavel/ros2_ws/install/lesson_urdf/share/lesson_urdf/rviz
+creating /home/pavel/ros2_ws/install/lesson_urdf/share/lesson_urdf/config
+copying config/controllers.yaml -> /home/pavel/ros2_ws/install/lesson_urdf/share/lesson_urdf/config
+creating /home/pavel/ros2_ws/install/lesson_urdf/share/lesson_urdf/meshes
+copying meshes/base_link.STL -> /home/pavel/ros2_ws/install/lesson_urdf/share/lesson_urdf/meshes
+copying meshes/link_p.STL -> /home/pavel/ros2_ws/install/lesson_urdf/share/lesson_urdf/meshes
+copying meshes/link_c.STL -> /home/pavel/ros2_ws/install/lesson_urdf/share/lesson_urdf/meshes
+copying meshes/link_r.STL -> /home/pavel/ros2_ws/install/lesson_urdf/share/lesson_urdf/meshes
+running install_egg_info
+Copying ../../../build/lesson_urdf/lesson_urdf.egg-info to /home/pavel/ros2_ws/install/lesson_urdf/lib/python3.10/site-packages/lesson_urdf-0.0.0-py3.10.egg-info
+running install_scripts
+Installing joint_gui script to /home/pavel/ros2_ws/install/lesson_urdf/lib/lesson_urdf
+Installing moveit_monitor_gui script to /home/pavel/ros2_ws/install/lesson_urdf/lib/lesson_urdf
+writing list of installed files to '/home/pavel/ros2_ws/build/lesson_urdf/install.log'
