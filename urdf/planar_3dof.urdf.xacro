@@ -20,7 +20,7 @@
   <link name="base_link">
     <inertial>
       <origin xyz="-0.24659 0 0" rpy="0 0 0"/>
-      <mass value="505.3"/>
+      <mass value="11.35"/>  
       <inertia ixx="180.49" ixy="0" ixz="0"
                iyy="21.405" iyz="0" izz="181.05"/>
     </inertial>
@@ -56,7 +56,7 @@
         </geometry>
       </collision>
       <inertial>
-        <mass value="1.0"/>
+        <mass value="5.0"/>  
         <origin xyz="0 0 0"/>
         <inertia ixx="0.01" iyy="0.01" izz="0.01"
                  ixy="0" ixz="0" iyz="0"/>
@@ -68,7 +68,7 @@
       <parent link="${parent}"/>
       <child link="Link_c_${side}"/>
       <axis xyz="0 0 1"/>
-      <limit lower="-1.57" upper="1.57" effort="100" velocity="5"/>
+      <limit lower="-1.5708" upper="1.5708" effort="100" velocity="5"/>  <!-- Restricted to ±90° -->
     </joint>
 
     <gazebo reference="Joint_c_${side}">
@@ -88,7 +88,7 @@
         </geometry>
       </collision>
       <inertial>
-        <mass value="1.0"/>
+        <mass value="15.0"/>  
         <origin xyz="0 0 0"/>
         <inertia ixx="0.01" iyy="0.01" izz="0.01"
                  ixy="0" ixz="0" iyz="0"/>
@@ -100,7 +100,7 @@
       <parent link="Link_c_${side}"/>
       <child link="Link_p_${side}"/>
       <axis xyz="0 0 1"/>
-      <limit lower="-1.57" upper="1.57" effort="100" velocity="5"/>
+      <limit lower="-1.5708" upper="1.5708" effort="100" velocity="5"/>  <!-- Restricted to ±90° -->
     </joint>
 
     <gazebo reference="Joint_p_${side}">
@@ -120,7 +120,7 @@
         </geometry>
       </collision>
       <inertial>
-        <mass value="1.0"/>
+        <mass value="8.0"/>  
         <origin xyz="0 0 0"/>
         <inertia ixx="0.01" iyy="0.01" izz="0.01"
                  ixy="0" ixz="0" iyz="0"/>
@@ -132,7 +132,7 @@
       <parent link="Link_p_${side}"/>
       <child link="Link_r_${side}"/>
       <axis xyz="0 0 1"/>
-      <limit lower="-1.57" upper="1.57" effort="100" velocity="5"/>
+      <limit lower="-1.5708" upper="1.5708" effort="100" velocity="5"/>  <!-- Restricted to ±90° -->
     </joint>
 
     <gazebo reference="Joint_r_${side}">

@@ -13,45 +13,69 @@ from std_msgs.msg import Float64MultiArray
 # =========================
 # CONFIG
 # =========================
-JOINTS = ["joint_p", "joint_c", "joint_r"]
+JOINTS = [
+    "Joint_c_right",
+    "Joint_p_right",
+    "Joint_r_right",
+    "Joint_c_left",
+    "Joint_p_left",
+    "Joint_r_left",
+]
 
 LIMITS_DEG = {
-    "joint_p": (-90.0, 90.0),
-    "joint_c": (-90.0, 90.0),
-    "joint_r": (-90.0, 90.0),
+    "Joint_c_right": (-90.0, 90.0),
+    "Joint_p_right": (-90.0, 90.0),
+    "Joint_r_right": (-90.0, 90.0),
+    "Joint_c_left": (-90.0, 90.0),
+    "Joint_p_left": (-90.0, 90.0),
+    "Joint_r_left": (-90.0, 90.0),
 }
 
 HOME_DEG = {
-    "joint_p": 15.0,
-    "joint_c": -25.0,
-    "joint_r": 40.0,
+    "Joint_c_right": -25.0,
+    "Joint_p_right": 15.0,
+    "Joint_r_right": 40.0,
+    "Joint_c_left": 25.0,
+    "Joint_p_left": 15.0,
+    "Joint_r_left": 40.0,
 }
 
 PUBLISH_HZ = 20.0
 
 HW_CMD_TOPIC = "leg_joints_cmd"
-HW_MAP = {"x": "joint_p", "y": "joint_c", "z": "joint_r"}
+HW_MAP = {
+    "x": "Joint_p_right",
+    "y": "Joint_c_right",
+    "z": "Joint_r_right",
+}
 
-# Imprimir T0_foot geométrica en terminal al mover sliders
 PRINT_GEOM_TO_TERMINAL = True
 
 # =========================
-# PARÁMETROS GEOMÉTRICOS REALES
-# derivados del CAD / URDF
+# RIGHT LEG GEOMETRY
+# Based on your URDF
 # =========================
+RIGHT_C_ORIGIN = (0.0, -0.8, 0.0)
+RIGHT_C_RPY = (1.5708, 0.0, 1.5708)
 
-# base(c) -> p  (en el frame de cadera)
-D_CP = (-0.018425, -7.5056e-05, 0.0728)
+RIGHT_P_ORIGIN = (-0.00013659, -0.099312, 0.25)
+RIGHT_P_RPY = (1.5708, 0.0, -0.0013754)
 
-# p -> r
-D_PR = (0.18787, 0.0, 0.064085)
+RIGHT_R_ORIGIN = (0.0, 1.6, 0.0)
+RIGHT_R_RPY = (3.1416, 0.0, 0.0)
 
-# r -> foot
-D_RF = (0.16093478, 0.00001944, 0.03845750)
+# =========================
+# LEFT LEG GEOMETRY
+# Based on your URDF
+# =========================
+LEFT_C_ORIGIN = (0.0, 0.8, 0.0)
+LEFT_C_RPY = (1.5708, 0.0, 1.5708)
 
-# Rotación fija entre frame c y frame p
-# viene de joint_p origin rpy="1.5708 0 -1.5708"
-RPY_CP = (1.5708, 0.0, -1.5708)
+LEFT_P_ORIGIN = (-0.00013659, -0.099312, 0.25)
+LEFT_P_RPY = (1.5708, 0.0, -0.0013754)
+
+LEFT_R_ORIGIN = (0.0, 1.6, 0.0)
+LEFT_R_RPY = (-3.1416, 0.0, 0.0)
 
 
 def clamp(v: float, lo: float, hi: float) -> float:
@@ -109,17 +133,10 @@ def trans_T(x: float, y: float, z: float) -> np.ndarray:
 
 
 def rpy_T(roll: float, pitch: float, yaw: float) -> np.ndarray:
-    """
-    Convención ZYX:
-    R = Rz(yaw) * Ry(pitch) * Rx(roll)
-    """
     return rotz_T(yaw) @ roty_T(pitch) @ rotx_T(roll)
 
 
 def rot_to_rpy_zyx(R: np.ndarray):
-    """
-    Devuelve (yaw, pitch, roll) en convención ZYX.
-    """
     r11, r21, r31 = R[0, 0], R[1, 0], R[2, 0]
     r32, r33 = R[2, 1], R[2, 2]
     pitch = math.atan2(-r31, math.sqrt(r11 * r11 + r21 * r21))
@@ -150,17 +167,21 @@ class JointGuiNode(Node):
         self.hw_pub = self.create_publisher(Vector3, HW_CMD_TOPIC, 10)
         self.sim_pub = self.create_publisher(Float64MultiArray, "/position_controller/commands", 10)
 
-        self.sim_joint_order = ["joint_p", "joint_c", "joint_r"]
         self.positions_rad = {j: 0.0 for j in JOINTS}
 
         self.timer = self.create_timer(1.0 / PUBLISH_HZ, self.publish_joint_states)
 
-        # MTH fija c -> p (offset + reorientación fija)
-        self.T_cp_fixed = trans_T(*D_CP) @ rpy_T(*RPY_CP)
+        # Right leg fixed transforms
+        self.T_right_c_fixed = trans_T(*RIGHT_C_ORIGIN) @ rpy_T(*RIGHT_C_RPY)
+        self.T_right_p_fixed = trans_T(*RIGHT_P_ORIGIN) @ rpy_T(*RIGHT_P_RPY)
+        self.T_right_r_fixed = trans_T(*RIGHT_R_ORIGIN) @ rpy_T(*RIGHT_R_RPY)
 
-        # MTH fijas p -> r y r -> foot (solo traslación)
-        self.T_pr_fixed = trans_T(*D_PR)
-        self.T_rf_fixed = trans_T(*D_RF)
+        # Left leg fixed transforms
+        self.T_left_c_fixed = trans_T(*LEFT_C_ORIGIN) @ rpy_T(*LEFT_C_RPY)
+        self.T_left_p_fixed = trans_T(*LEFT_P_ORIGIN) @ rpy_T(*LEFT_P_RPY)
+        self.T_left_r_fixed = trans_T(*LEFT_R_ORIGIN) @ rpy_T(*LEFT_R_RPY)
+
+        self.sim_joint_order = JOINTS[:]
 
     def set_joint_deg(self, name: str, deg: float):
         lo, hi = LIMITS_DEG[name]
@@ -189,54 +210,40 @@ class JointGuiNode(Node):
         )
 
     def publish_sim_position_commands(self):
-        data = []
-        for j in self.sim_joint_order:
-            data.append(self.positions_rad[j])
+        data = [self.positions_rad[j] for j in self.sim_joint_order]
         self.sim_pub.publish(Float64MultiArray(data=data))
 
-    # ==========================================================
-    # MTH GEOMÉTRICAS
-    # ==========================================================
-    def compute_fk_details(self):
-        """
-        Método geométrico expresado con matrices homogéneas.
+    def compute_leg_fk(self, side: str):
+        if side == "right":
+            qc = self.positions_rad["Joint_c_right"]
+            qp = self.positions_rad["Joint_p_right"]
+            qr = self.positions_rad["Joint_r_right"]
 
-        Convención:
-        - joint_c: giro alrededor de Z de base
-        - joint_p: giro alrededor de Z local con signo negativo
-        - joint_r: giro alrededor de Z local con signo negativo
+            T01 = self.T_right_c_fixed @ rotz_T(qc)
+            T12 = self.T_right_p_fixed @ rotz_T(qp)
+            T23 = self.T_right_r_fixed @ rotz_T(qr)
+        else:
+            qc = self.positions_rad["Joint_c_left"]
+            qp = self.positions_rad["Joint_p_left"]
+            qr = self.positions_rad["Joint_r_left"]
 
-        La 'articulación fantasma' queda absorbida en la MTH fija c->p:
-            T_cp_fixed = Trans(D_CP) * RPY_CP
-        """
-        qc = self.positions_rad["joint_c"]
-        qp = self.positions_rad["joint_p"]
-        qr = self.positions_rad["joint_r"]
+            T01 = self.T_left_c_fixed @ rotz_T(qc)
+            T12 = self.T_left_p_fixed @ rotz_T(qp)
+            T23 = self.T_left_r_fixed @ rotz_T(qr)
 
-        # 0 -> c
-        T01 = rotz_T(qc)
-
-        # c -> p
-        T12 = self.T_cp_fixed @ rotz_T(-qp)
-
-        # p -> r
-        T23 = self.T_pr_fixed @ rotz_T(-qr)
-
-        # r -> foot
-        T34 = self.T_rf_fixed
-
-        # acumuladas
         T02 = T01 @ T12
         T03 = T02 @ T23
-        T04 = T03 @ T34
 
-        Ts = [
-            ("T0_1", T01),      # base -> c
-            ("T0_2", T02),      # base -> p
-            ("T0_3", T03),      # base -> r
-            ("T0_4", T04),      # base -> foot
-            ("T0_foot", T04),   # alias
+        return [
+            (f"T0_1_{side}", T01),
+            (f"T0_2_{side}", T02),
+            (f"T0_3_{side}", T03),
         ]
+
+    def compute_fk_details(self):
+        Ts = []
+        Ts.extend(self.compute_leg_fk("right"))
+        Ts.extend(self.compute_leg_fk("left"))
 
         details = []
         for name, T in Ts:
@@ -258,10 +265,13 @@ class JointGuiNode(Node):
             return
 
         details = self.compute_fk_details()
-        T = details[-1]["T"]
+        if not details:
+            return
+
+        T = details[2]["T"]  # right leg final matrix
         p = T[:3, 3]
         self.get_logger().info(
-            f"[GEOM T0_foot] xyz={fmt_vec3(p)}\n{fmt_mat4(T)}"
+            f"[GEOM RIGHT LEG] xyz={fmt_vec3(p)}\n{fmt_mat4(T)}"
         )
 
 
@@ -275,14 +285,11 @@ class Window(QtWidgets.QWidget):
         self.rows = {}
         self._fk_cache = []
 
-        # =========================
-        # State details widgets
-        # =========================
         self.state_box = QtWidgets.QGroupBox("State details (FK / Transform matrices)")
         h = QtWidgets.QHBoxLayout()
 
         self.lst_mats = QtWidgets.QListWidget()
-        self.lst_mats.setMaximumWidth(140)
+        self.lst_mats.setMaximumWidth(180)
 
         self.txt_mat = QtWidgets.QPlainTextEdit()
         self.txt_mat.setReadOnly(True)
@@ -308,7 +315,6 @@ class Window(QtWidgets.QWidget):
                 f"rpy [rad]= (roll={roll:.4f}, pitch={pitch:.4f}, yaw={yaw:.4f})\n\n"
                 f"T (4x4):\n{fmt_mat4(T)}"
             )
-
             self.txt_mat.setPlainText(text)
 
         self.lst_mats.currentRowChanged.connect(lambda _: show_selected_matrix())
@@ -347,14 +353,11 @@ class Window(QtWidgets.QWidget):
 
             self.node.maybe_print_geom_terminal()
 
-        # =========================
-        # Sliders
-        # =========================
         for j in JOINTS:
             row = QtWidgets.QHBoxLayout()
 
             label = QtWidgets.QLabel(j)
-            label.setFixedWidth(55)
+            label.setFixedWidth(110)
 
             slider = QtWidgets.QSlider(QtCore.Qt.Horizontal)
             lo, hi = LIMITS_DEG[j]
@@ -363,7 +366,7 @@ class Window(QtWidgets.QWidget):
             slider.setValue(0)
 
             edit = QtWidgets.QLineEdit("0")
-            edit.setFixedWidth(55)
+            edit.setFixedWidth(60)
             edit.setAlignment(QtCore.Qt.AlignRight)
 
             def apply_value_deg(val_deg: float, joint=j):
@@ -408,9 +411,6 @@ class Window(QtWidgets.QWidget):
 
         layout.addWidget(self.state_box)
 
-        # =========================
-        # Botones básicos
-        # =========================
         btns = QtWidgets.QHBoxLayout()
         btn_zero = QtWidgets.QPushButton("Zero")
         btn_home = QtWidgets.QPushButton("Home")
@@ -418,9 +418,6 @@ class Window(QtWidgets.QWidget):
         btns.addWidget(btn_home)
         layout.addLayout(btns)
 
-        # =========================
-        # Hardware
-        # =========================
         hw_row = QtWidgets.QHBoxLayout()
         self.chk_enable_hw = QtWidgets.QCheckBox("Habilitar motores")
         self.chk_enable_hw.setChecked(False)
@@ -529,7 +526,6 @@ class Window(QtWidgets.QWidget):
         self.chk_enable_hw.stateChanged.connect(update_hw_label)
         btn_send.clicked.connect(do_send)
 
-        # init
         do_zero()
         update_hw_label()
 
