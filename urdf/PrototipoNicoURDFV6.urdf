@@ -1,0 +1,552 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- This URDF was automatically created by SolidWorks to URDF Exporter! Originally created by Stephen Brawner (brawner@gmail.com) 
+     Commit Version: 1.6.0-4-g7f85cfe  Build Version: 1.6.7995.38578
+     For more information, please see http://wiki.ros.org/sw_urdf_exporter -->
+<robot
+  name="PrototipoNicoURDFV6">
+  <link
+    name="base_link">
+    <inertial>
+      <origin
+        xyz="0.0422846174925098 0.0293305846777194 -0.0155747728451798"
+        rpy="0 0 0" />
+      <mass
+        value="0.240693012473673" />
+      <inertia
+        ixx="0.000151590255723206"
+        ixy="-9.87804213145531E-06"
+        ixz="-8.68693090040527E-06"
+        iyy="0.000367494876034807"
+        iyz="3.03958544894604E-07"
+        izz="0.000324523396971962" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://PrototipoNicoURDFV6/meshes/base_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="1 1 1 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://PrototipoNicoURDFV6/meshes/base_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="Joint_c_right"
+    type="revolute">
+    <origin
+      xyz="-0.012784 0.039302 -0.024993"
+      rpy="1.5708 0 -1.5708" />
+    <parent
+      link="base_link" />
+    <child
+      link="Link_c_right" />
+    <axis
+      xyz="0 0 1" />
+    <limit
+      lower="-1.5708"
+      upper="1.5708"
+      effort="100"
+      velocity="100" />
+    <dynamics
+      damping="0.1"
+      friction="0.1" />
+  </joint>
+  <link
+    name="Link_c_left">
+    <inertial>
+      <origin
+        xyz="0.030281 -0.022685 -0.0053944"
+        rpy="0 0 0" />
+      <mass
+        value="0.076578" />
+      <inertia
+        ixx="2.4084E-05"
+        ixy="6.6165E-06"
+        ixz="3.2617E-06"
+        iyy="2.1725E-05"
+        iyz="-2.5244E-06"
+        izz="3.4694E-05" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://PrototipoNicoURDFV6/meshes/Link_c_left.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="1 1 1 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://PrototipoNicoURDFV6/meshes/Link_c_left.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="Joint_c_left"
+    type="revolute">
+    <origin
+      xyz="0.0803 0 0"
+      rpy="0 0 0" />
+    <parent
+      link="base_link" />
+    <child
+      link="Link_c_left" />
+    <axis
+      xyz="0 0 1" />
+    <limit
+      lower="-1.5708"
+      upper="1.5708"
+      effort="100"
+      velocity="100" />
+    <dynamics
+      damping="0.1"
+      friction="0.1" />
+  </joint>
+  <link
+    name="Link_p_left">
+    <inertial>
+      <origin
+        xyz="-1.3878E-17 -0.065345 -0.019979"
+        rpy="0 0 0" />
+      <mass
+        value="0.27292" />
+      <inertia
+        ixx="0.0001003"
+        ixy="-2.4878E-21"
+        ixz="-9.7718E-21"
+        iyy="8.1494E-05"
+        iyz="-2.7269E-20"
+        izz="0.00012148" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://PrototipoNicoURDFV6/meshes/Link_p_left.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="1 1 1 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://PrototipoNicoURDFV6/meshes/Link_p_left.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="Joint_p_left"
+    type="revolute">
+    <origin
+      xyz="0.0705 -0.017147 -0.00786"
+      rpy="0 -1.5708 0" />
+    <parent
+      link="Link_c_left" />
+    <child
+      link="Link_p_left" />
+    <axis
+      xyz="0 0 -1" />
+    <limit
+      lower="-1.5708"
+      upper="1.5708"
+      effort="100"
+      velocity="100" />
+    <dynamics
+      damping="0.1"
+      friction="0.1" />
+  </joint>
+  <link
+    name="Link_r_left">
+    <inertial>
+      <origin
+        xyz="0.0017684 0.049182 -0.032899"
+        rpy="0 0 0" />
+      <mass
+        value="0.096277" />
+      <inertia
+        ixx="2.827E-05"
+        ixy="-4.873E-07"
+        ixz="-2.0562E-08"
+        iyy="1.6421E-05"
+        iyz="-4.7605E-07"
+        izz="2.4926E-05" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://PrototipoNicoURDFV6/meshes/Link_r_left.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="1 1 1 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://PrototipoNicoURDFV6/meshes/Link_r_left.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="Joint_r_left"
+    type="revolute">
+    <origin
+      xyz="0 -0.13069 0"
+      rpy="3.129 -0.00050149 -0.03981" />
+    <parent
+      link="Link_p_left" />
+    <child
+      link="Link_r_left" />
+    <axis
+      xyz="0 0 1" />
+    <limit
+      lower="-1.5708"
+      upper="1.5708"
+      effort="100"
+      velocity="100" />
+    <dynamics
+      damping="0.1"
+      friction="0.1" />
+  </joint>
+  <link
+    name="Link_wheels_left">
+    <inertial>
+      <origin
+        xyz="-2.0817E-17 2.7756E-16 -0.013"
+        rpy="0 0 0" />
+      <mass
+        value="0.065044" />
+      <inertia
+        ixx="2.77E-05"
+        ixy="-1.5498E-21"
+        ixz="4.162E-22"
+        iyy="2.77E-05"
+        iyz="-6.0591E-23"
+        izz="4.9085E-05" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://PrototipoNicoURDFV6/meshes/Link_wheels_left.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.79216 0.81961 0.93333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://PrototipoNicoURDFV6/meshes/Link_wheels_left.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="Joint_wheels_left"
+    type="continuous">
+    <origin
+      xyz="0.0049779 0.13502 0.0082029"
+      rpy="0.0126 0 -0.039813" />
+    <parent
+      link="Link_r_left" />
+    <child
+      link="Link_wheels_left" />
+    <axis
+      xyz="0 0 1" />
+    <limit
+      effort="100"
+      velocity="100" />
+    <dynamics
+      damping="0.1"
+      friction="0.1" />
+  </joint>
+  <link
+    name="Link_c_right">
+    <inertial>
+      <origin
+        xyz="-0.030118 -0.020968 -0.0051519"
+        rpy="0 0 0" />
+      <mass
+        value="0.077224" />
+      <inertia
+        ixx="2.3547E-05"
+        ixy="-6.1853E-06"
+        ixz="-3.2988E-06"
+        iyy="2.2026E-05"
+        iyz="-2.2748E-06"
+        izz="3.4361E-05" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://PrototipoNicoURDFV6/meshes/Link_c_right.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="1 1 1 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://PrototipoNicoURDFV6/meshes/Link_c_right.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="Joint_c_right"
+    type="revolute">
+    <origin
+      xyz="0 0 0"
+      rpy="0 0 0" />
+    <parent
+      link="base_link" />
+    <child
+      link="Link_c_right" />
+    <axis
+      xyz="0 0 1" />
+    <limit
+      lower="-1.5708"
+      upper="1.5708"
+      effort="100"
+      velocity="100" />
+    <dynamics
+      damping="0.1"
+      friction="0.1" />
+  </joint>
+  <link
+    name="Link_p_right">
+    <inertial>
+      <origin
+        xyz="-0.00099075 -0.064833 0.02156"
+        rpy="0 0 0" />
+      <mass
+        value="0.27292" />
+      <inertia
+        ixx="0.00010029"
+        ixy="-2.8693E-07"
+        ixz="1.4836E-08"
+        iyy="8.1522E-05"
+        iyz="9.7082E-07"
+        izz="0.00012146" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://PrototipoNicoURDFV6/meshes/Link_p_right.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="1 1 1 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://PrototipoNicoURDFV6/meshes/Link_p_right.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="Joint_p_right"
+    type="revolute">
+    <origin
+      xyz="-0.0705 -0.015 -0.0077"
+      rpy="-1.5708 -1.5555 1.5951" />
+    <parent
+      link="Link_c_right" />
+    <child
+      link="Link_p_right" />
+    <axis
+      xyz="0 0 1" />
+    <limit
+      lower="-1.5708"
+      upper="1.5708"
+      effort="100"
+      velocity="100" />
+    <dynamics
+      damping="0.1"
+      friction="0.1" />
+  </joint>
+  <link
+    name="Link_r_right">
+    <inertial>
+      <origin
+        xyz="-0.0016009 0.049569 0.032322"
+        rpy="0 0 0" />
+      <mass
+        value="0.096277" />
+      <inertia
+        ixx="2.8278E-05"
+        ixy="3.8023E-07"
+        ixz="-1.9513E-08"
+        iyy="1.6425E-05"
+        iyz="5.7567E-07"
+        izz="2.4913E-05" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://PrototipoNicoURDFV6/meshes/Link_r_right.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="1 1 1 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://PrototipoNicoURDFV6/meshes/Link_r_right.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="Joint_r_right"
+    type="revolute">
+    <origin
+      xyz="-0.0019963 -0.13064 0.0031739"
+      rpy="-3.1416 0 0.015536" />
+    <parent
+      link="Link_p_right" />
+    <child
+      link="Link_r_right" />
+    <axis
+      xyz="0 0 -1" />
+    <limit
+      lower="-1.5708"
+      upper="1.5708"
+      effort="100"
+      velocity="100" />
+    <dynamics
+      damping="0.1"
+      friction="0.1" />
+  </joint>
+  <link
+    name="Link_wheels_right">
+    <inertial>
+      <origin
+        xyz="4.1633E-17 0 0.013"
+        rpy="0 0 0" />
+      <mass
+        value="0.065044" />
+      <inertia
+        ixx="2.77E-05"
+        ixy="-1.2685E-36"
+        ixz="7.9856E-21"
+        iyy="2.77E-05"
+        iyz="-3.9215E-21"
+        izz="4.9085E-05" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://PrototipoNicoURDFV6/meshes/Link_wheels_right.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.79216 0.81961 0.93333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://PrototipoNicoURDFV6/meshes/Link_wheels_right.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="Joint_wheels_right"
+    type="continuous">
+    <origin
+      xyz="-0.0041596 0.13494 -0.0097816"
+      rpy="-0.024288 0 0.030816" />
+    <parent
+      link="Link_r_right" />
+    <child
+      link="Link_wheels_right" />
+    <axis
+      xyz="0 0 -1" />
+    <limit
+      effort="100"
+      velocity="100" />
+    <dynamics
+      damping="0.1"
+      friction="0.1" />
+  </joint>
+</robot>

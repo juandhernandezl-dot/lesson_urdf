@@ -8,12 +8,18 @@ controller_manager:
     position_controller:
       type: joint_trajectory_controller/JointTrajectoryController
 
+    wheel_velocity_controller:
+      type: velocity_controllers/JointGroupVelocityController
+
+
+
 position_controller:
   ros__parameters:
     joints:
       - Joint_c_right
       - Joint_p_right
       - Joint_r_right
+
       - Joint_c_left
       - Joint_p_left
       - Joint_r_left
@@ -23,4 +29,18 @@ position_controller:
 
     state_interfaces:
       - position
+      - velocity
+
+    allow_nonzero_velocity_at_trajectory_end: true
+
+wheel_velocity_controller:
+  ros__parameters:
+    joints:
+      - Joint_wheels_left
+      - Joint_wheels_right
+
+    command_interfaces:
+      - velocity
+
+    state_interfaces:
       - velocity

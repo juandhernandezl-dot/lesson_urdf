@@ -14,6 +14,8 @@ def generate_launch_description():
     pkg_name = "lesson_urdf"
     pkg_share = get_package_share_directory(pkg_name)
 
+    controller_mgr = "/controller_manager"
+
     gazebo_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             os.path.join(get_package_share_directory("gazebo_ros"), "launch", "gazebo.launch.py")
@@ -27,16 +29,18 @@ def generate_launch_description():
     controllers_yaml = os.path.join(pkg_share, "config", "controllers.yaml")
 
     robot_description = ParameterValue(
-        Command(
-            "xacro "
-            + os.path.join(pkg_share, "urdf", "planar_3dof.urdf.xacro")
-            + " pkg_share:=" + pkg_share
-            + " controllers_yaml:=" + controllers_yaml
-            + " mesh_scale:='1 1 1'"
-            + " fix_to_world:=true"
-        ),
-        value_type=str
-    )
+        Command([
+            "xacro ",
+            os.path.join(pkg_share, "urdf", "planar_3dof.urdf.xacro"),
+            " ",
+            "pkg_share:=",
+            pkg_share,
+            " ",
+            "controllers_yaml:=",
+            controllers_yaml,
+        ]),
+    value_type=str,
+)
 
     robot_state_publisher = Node(
         package="robot_state_publisher",
@@ -44,6 +48,17 @@ def generate_launch_description():
         output="screen",
         parameters=[{"robot_description": robot_description}],
     )
+
+    spawner_wheels = Node(
+    package="controller_manager",
+    executable="spawner",
+    output="screen",
+    arguments=[
+        "wheel_velocity_controller",
+        "--controller-manager", controller_mgr,
+        "--controller-manager-timeout", "120",
+    ],
+)
 
     spawn_entity = Node(
         package="gazebo_ros",
@@ -54,11 +69,10 @@ def generate_launch_description():
             "-entity", "planar_3dof_leglike",
             "-x", "0.0",
             "-y", "0.0",
-            "-z", "1.0",
+            "-z", "0.5",
         ],
     )
 
-    controller_mgr = "/controller_manager"
 
     spawner_jsb = Node(
         package="controller_manager",
@@ -84,7 +98,7 @@ def generate_launch_description():
 
     delayed_spawners = TimerAction(
         period=5.0,
-        actions=[spawner_jsb, spawner_pos]
+        actions=[spawner_jsb, spawner_pos, spawner_wheels]
     )
 
     return LaunchDescription([
